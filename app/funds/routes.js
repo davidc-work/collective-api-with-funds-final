@@ -2,6 +2,16 @@ const express = require('express')
 const router = express.Router()
 const db = require('../../lib/db')
 
+function formatNumber(n, type) {
+  if (!['dollars', 'percent'].includes(type)) return n;
+
+  var str = n.toString().split('').filter(c => !isNaN(parseInt(c)) || c == '.').join('');
+  str = parseFloat(str, 10).toFixed(2);
+  if (str == 'NaN') str = '0.00';
+  if (type == 'dollars') return '$' + str;
+  return str + '%';
+}
+
 router.get('/funds', (req, res) => {
   const funds = db.funds.findAll().slice(0).sort((a, b) => a.name > b.name ? 1 : 0)
   console.log("htting the funds route", funds[0]);
@@ -18,14 +28,14 @@ router.post('/funds', (req, res) => {
     "name": req.body.name,
     "ticker": req.body.ticker,
     "assetClass": req.body.assetClass,
-    "expenseRatio": req.body.expenseRatio,
-    "price": req.body.price,
-    "priceChange": req.body.priceChange,
-    "ytd": req.body.ytd,
-    "oneyr": req.body.oneyr,
-    "fiveyr": req.body.fiveyr,
-    "tenyr": req.body.tenyr,
-    "sinceInception": req.body.sinceInception
+    "expenseRatio": formatNumber(req.body.expenseRatio, 'percent'),
+    "price": formatNumber(req.body.price, 'dollars'),
+    "priceChange": formatNumber(req.body.priceChange, 'dollars'),
+    "ytd": formatNumber(req.body.ytd, 'percent'),
+    "oneyr": formatNumber(req.body.oneyr, 'percent'),
+    "fiveyr": formatNumber(req.body.fiveyr, 'percent'),
+    "tenyr": formatNumber(req.body.tenyr, 'percent'),
+    "sinceInception": formatNumber(req.body.sinceInception, 'percent')
   });
   res.json(newFund)
 });
@@ -35,14 +45,14 @@ router.put('/funds/:id', (req, res) => {
     "name": req.body.name,
     "ticker": req.body.ticker,
     "assetClass": req.body.assetClass,
-    "expenseRatio": req.body.expenseRatio,
-    "price": req.body.price,
-    "priceChange": req.body.priceChange,
-    "ytd": req.body.ytd,
-    "oneyr": req.body.oneyr,
-    "fiveyr": req.body.fiveyr,
-    "tenyr": req.body.tenyr,
-    "sinceInception": req.body.sinceInception
+    "expenseRatio": formatNumber(req.body.expenseRatio, 'percent'),
+    "price": formatNumber(req.body.price, 'dollars'),
+    "priceChange": formatNumber(req.body.priceChange, 'dollars'),
+    "ytd": formatNumber(req.body.ytd, 'percent'),
+    "oneyr": formatNumber(req.body.oneyr, 'percent'),
+    "fiveyr": formatNumber(req.body.fiveyr, 'percent'),
+    "tenyr": formatNumber(req.body.tenyr, 'percent'),
+    "sinceInception": formatNumber(req.body.sinceInception, 'percent')
   });
   res.json(updatedFund);
 });
